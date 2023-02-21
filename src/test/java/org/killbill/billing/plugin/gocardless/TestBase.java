@@ -28,7 +28,8 @@ import org.killbill.billing.util.api.CustomFieldUserApi;
 import org.killbill.billing.util.callcontext.CallContext;
 import org.killbill.clock.ClockMock;
 import org.mockito.Mockito;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 
 
@@ -36,6 +37,7 @@ import com.gocardless.GoCardlessClient;
 
 public class TestBase {
 
+	private static final Logger logger = LoggerFactory.getLogger(TestBase.class);
     private static final String PROPERTIES_FILE_NAME = "gocardless.properties";
 
     public static final Currency DEFAULT_CURRENCY = Currency.USD;
@@ -78,6 +80,7 @@ public class TestBase {
 
     @BeforeMethod(groups = "integration")
     public void setUpIntegration() throws Exception {
+    	logger.info("setUp");
         Properties properties = new Properties();
         try {
             properties = TestUtils.loadProperties(PROPERTIES_FILE_NAME);
@@ -85,10 +88,11 @@ public class TestBase {
             // Look up environment variables instead
             properties.put("org.killbill.billing.plugin.gocardless.gocardlesstoken", System.getenv("GOCARDLESS_ACCESS_TOKEN"));
             properties.put("org.killbill.billing.plugin.gocardless.environment", System.getenv("GOCARDLESS_ENVIRONMENT"));
+            logger.info("env variables setup");
         }
         final GoCardlessConfigProperties goCardlessConfigProperties = new GoCardlessConfigProperties(properties, "");
         goCardlessconfigurationHandler.setDefaultConfigurable(goCardlessConfigProperties);
-        
+        logger.info("set default configurable");
         final GoCardlessClient.Environment environment = goCardlessConfigProperties.getEnvironment().equalsIgnoreCase("live") ? GoCardlessClient.Environment.LIVE : GoCardlessClient.Environment.SANDBOX;
         goCardlessClient = GoCardlessClient.newBuilder(goCardlessConfigProperties.getGCAccessToken())
 		.withEnvironment(environment).build();
