@@ -78,7 +78,7 @@ public class TestBase {
 
     }
 
-    @BeforeMethod(groups = "integration")
+    @BeforeMethod(groups = "slow")
     public void setUpIntegration() throws Exception {
     	logger.info("setUp");
         Properties properties = new Properties();
